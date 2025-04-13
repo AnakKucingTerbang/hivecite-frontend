@@ -8,7 +8,20 @@ pub fn run() {
             description: "create_initial_tables",
             sql: "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);",
             kind: MigrationKind::Up,
+        },
+        // --- New Migration ---
+        Migration {
+            version: 2,
+            description: "create_research_table",
+            sql: "CREATE TABLE IF NOT EXISTS research (
+                id TEXT PRIMARY KEY, 
+                name TEXT NOT NULL, 
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+                deleted_at DATETIME
+            );",
+            kind: MigrationKind::Up,
         }
+        // --- End New Migration ---
     ];
     
     tauri::Builder::default()
