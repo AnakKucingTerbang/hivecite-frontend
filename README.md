@@ -14,7 +14,7 @@ npx sv create
 npx sv create my-app
 ```
 
-## Developing
+## Developing for Web App
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
@@ -23,6 +23,20 @@ npm run dev
 
 # or start the server and open the app in a new browser tab
 npm run dev -- --open
+```
+
+## Developing for Desktop App
+
+Follow instruction at (rust website)[https://v2.tauri.app/start/prerequisites/]
+
+Run the below command to start a dev server
+```bash
+npm run dev
+```
+
+After the dev server is up, run the below command on another terminal
+```bash
+npx tauri dev
 ```
 
 ## Building
