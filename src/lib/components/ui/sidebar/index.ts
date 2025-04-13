@@ -1,6 +1,3 @@
-import Root from "./sidebar.svelte";
+import Root from './sidebar.svelte';
 
-export {
-  Root,
-  Root as Sidebar
-}
+export { Root, Root as Sidebar };
