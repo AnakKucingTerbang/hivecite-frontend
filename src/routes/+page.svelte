@@ -22,7 +22,7 @@
 						</p>
 					</div>
 					<div class="flex flex-col gap-2 min-[400px]:flex-row">
-						<Button size="lg" href="/auth">Get Started</Button>
+						<Button size="lg" href="/dashboard">Get Started</Button>
 						<Button size="lg" variant="secondary" href="#features">Learn More</Button>
 					</div>
 				</div>
