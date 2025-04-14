@@ -60,6 +60,7 @@
 		"@pdfslick/core": "^2.3.0",
 		"drizzle-orm": "^0.40.0",
 		"lucide-svelte": "^0.487.0",
+		"pdfjs-dist": "^5.1.91",
 		"postgres": "^3.4.5"
 	}
 }

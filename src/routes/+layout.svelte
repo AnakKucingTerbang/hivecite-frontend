@@ -1,6 +1,10 @@
+<svelte:head>
+    <script src="https://acrobatservices.adobe.com/view-sdk/viewer.js"></script>
+</svelte:head>
+
 <script lang="ts">
 	import '../app.css';
-	export const ssr = false;
+
 	let { children } = $props();
 </script>
 
