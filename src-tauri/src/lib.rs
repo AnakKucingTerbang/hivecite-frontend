@@ -17,6 +17,7 @@ pub fn run() {
                 id TEXT PRIMARY KEY, 
                 name TEXT NOT NULL, 
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+                updated_at DATETIME,
                 deleted_at DATETIME
             );",
             kind: MigrationKind::Up,

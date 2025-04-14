@@ -4,7 +4,9 @@
 	import { Input } from '$lib/components/ui/input';
 	import { createActiveResearch, createResearchList } from '@/states.svelte';
 	import { tick } from 'svelte';
-    import { goto } from '$app/navigation';
+	import { goto } from '$app/navigation';
+	import Database from "@tauri-apps/plugin-sql";
+	import { v4 as uuidv4 } from 'uuid'; // Import uuid
 
 	const activeResearch = createActiveResearch();
 	const researchList = createResearchList();
@@ -82,12 +84,29 @@
 								isAddNewResearch = false;
 								newResearchName = '';
 							}}
-							onkeydown={(e) => {
+
+							onkeydown={async (e) => {
 								if (e.key === 'Enter' && newResearchName !== '') {
-									researchList.add(newResearchName);
-									newResearchName = '';
-									isAddNewResearch = false;
-                                    changeRoute()
+									const db = await Database.load("sqlite:hivecite.db");
+									const newId = uuidv4();
+									const createdAt = new Date().toISOString();
+									try {
+										await db.execute("INSERT INTO research (id, name, created_at) VALUES ($1, $2, $3)", [
+											newId,
+											newResearchName,
+											createdAt
+										]);
+
+										researchList.add(newResearchName); 
+
+										newResearchName = '';
+										isAddNewResearch = false;
+
+										changeRoute();
+									} catch (error) {
+										console.error('Failed to save new research via Tauri:', error);
+										// Optionally: Show an error message to the user
+									}
 								}
 							}}
 						/>
