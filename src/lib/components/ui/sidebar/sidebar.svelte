@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Folder, Plus } from 'lucide-svelte';
+	import { Folder, Plus, Settings, PanelRightOpen } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { createActiveResearch, createResearchList } from '@/states.svelte';
@@ -22,15 +22,15 @@
     }
 </script>
 
-<div class="flex max-w-64 min-w-64 flex-col bg-white">
-	<div class="p-4">
+<div class="flex max-w-64 min-w-64 flex-col bg-white h-full">
+	<div class="p-4 flex justify-between items-center">
 		<h1 class="text-xl font-bold text-blue-600">HiveCite</h1>
+		<PanelRightOpen size={18} class="cursor-pointer text-gray-400"/>
 	</div>
-
 	<div class="p-4">
 		<Button
 			class="w-full"
-			variant="theme"
+			variant="theme" 
 			on:click={async () => {
 				isAddNewResearch = true;
 				await tick();
@@ -43,9 +43,8 @@
 			<span>New Research</span>
 		</Button>
 	</div>
-
-	<div class="px-4 py-2">
-		<h2 class="mb-2 text-sm font-semibold text-gray-500">Research asd</h2>
+	<div class="px-4 py-2 h-full overflow-auto">
+		<h2 class="mb-2 text-sm font-semibold text-gray-500">Research</h2>
 		<ul>
 			{#each researchList.list as research}
 				<a href="/dashboard/{research}">
@@ -60,7 +59,7 @@
 						>
 							<Folder class="mr-2" />
 							<span class="truncate"
-								>{research.length > 20 ? research.substring(0, 17) + '...' : research}</span
+								>{research.length > 20 ? research.substring(0, 14) + '...' : research}</span
 							>
 						</button>
 					</li>
@@ -96,15 +95,10 @@
 			{/if}
 		</ul>
 	</div>
-
-	<div class="mt-auto border-t border-gray-200 p-4">
-		<div class="flex items-center">
-			<div
-				class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 font-semibold text-white"
-			>
-				R
-			</div>
-			<span class="ml-2">Researcher Account</span>
+	<a href="/setting" class="mt-auto border-t border-gray-200 p-4 cursor-pointer hover:bg-gray-200">
+		<div class="flex items-center gap-3">
+			<Settings />
+			<p>Settings</p>
 		</div>
-	</div>
+	</a>
 </div>

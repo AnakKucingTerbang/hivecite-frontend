@@ -3,7 +3,7 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = ({ params }) => {
 	return {
-		research: []
+		research: ["Title goes here", "wowowowowo wowowowowow wowowoow"]
 	};
 
 	error(404, 'Not found');

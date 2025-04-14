@@ -29,12 +29,7 @@ npm run dev -- --open
 
 Follow instruction at (rust website)[https://v2.tauri.app/start/prerequisites/]
 
-Run the below command to start a dev server
-```bash
-npm run dev
-```
-
-After the dev server is up, run the below command on another terminal
+Run the below command to start development with Tauri
 ```bash
 npx tauri dev
 ```

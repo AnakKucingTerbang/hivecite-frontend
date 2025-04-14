@@ -4,7 +4,7 @@
 	let { children, data } = $props();
 </script>
 
-<div class="flex h-screen">
+<div class="flex h-screen overflow-hidden">
 	<Sidebar research={data.research} />
 	{@render children()}
 </div>
