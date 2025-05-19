@@ -1,5 +1,12 @@
+// Define the shape of a research item
+export interface ResearchItem {
+	id: string;
+	name: string;
+	created_at: string; // Assuming created_at is stored as an ISO string or similar
+}
+
 export const createActiveResearch = () => {
-	let value = $state<string | null>(null);
+	let value = $state<string | null>(null); // Stores the ID of the active research
 
 	return {
 		get value() {
@@ -10,15 +17,30 @@ export const createActiveResearch = () => {
 };
 
 export const createResearchList = () => {
-	let list = $state<any>([]);
+	let list = $state<ResearchItem[]>([]);
 
 	return {
 		get list() {
 			return list;
 		},
-		add: (_value: any) => list.push(_value),
-		remove: (_value: any) => list.filter((item: any) => item !== _value),
-		init: (_values: any) => list = _values,
-		latest: () => list[list.length - 1]
+		add: (item: ResearchItem) => {
+			// Ensure no duplicate IDs are added, or decide on update strategy
+			// For now, simple push. Consider sorting by created_at if needed.
+			list = [...list, item];
+		},
+		remove: (itemId: string) => {
+			list = list.filter((item) => item.id !== itemId);
+		},
+		init: (items: ResearchItem[]) => {
+			list = items;
+		},
+		latest: (): ResearchItem | undefined => {
+			// Assuming list is sorted by created_at or insertion order matters for "latest"
+			if (list.length === 0) return undefined;
+			// If not sorted by date, this just gets the last added.
+			// If you need the truly latest by date, you might need to sort or find max created_at.
+			// For now, consistent with previous behavior of "last item in array".
+			return list[list.length - 1];
+		}
 	};
 };

@@ -2,7 +2,7 @@
 	import { Folder, Plus } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { createActiveResearch, createResearchList } from '@/states.svelte';
+	import { createActiveResearch, createResearchList, type ResearchItem } from '@/states.svelte'; // Import ResearchItem
 	import { tick } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Database from "@tauri-apps/plugin-sql";
@@ -11,16 +11,23 @@
 	const activeResearch = createActiveResearch();
 	const researchList = createResearchList();
 
-	let props = $props();
+	interface Props {
+		research: ResearchItem[];
+	}
+	let { research: initialResearch }: Props = $props();
+
 	let isAddNewResearch: boolean = $state(false);
 	let newResearchName: string = $state('');
 	let researchNameInputComponent: HTMLInputElement | null = $state(null);
 
-	researchList.init(props.research);
+	researchList.init(initialResearch);
 
     const changeRoute = () => {
-        activeResearch.update(researchList.latest())
-        goto(`/dashboard/${researchList.latest()}`)
+		const latestItem = researchList.latest();
+		if (latestItem && latestItem.id) { // Check if latestItem and its id exist
+			activeResearch.update(latestItem.id);
+			goto(`/dashboard/${latestItem.id}`);
+		}
     }
 </script>
 
@@ -47,22 +54,22 @@
 	</div>
 
 	<div class="px-4 py-2">
-		<h2 class="mb-2 text-sm font-semibold text-gray-500">Research asd</h2>
+		<h2 class="mb-2 text-sm font-semibold text-gray-500">Research</h2>
 		<ul>
-			{#each researchList.list as research}
-				<a href="/dashboard/{research}">
+			{#each researchList.list as researchItem (researchItem.id)}
+				<a href="/dashboard/{researchItem.id}">
 					<li
-						class="mb-1 rounded-md {research === activeResearch.value
+						class="mb-1 rounded-md {researchItem.id === activeResearch.value
 							? 'bg-blue-50 text-blue-600'
 							: ''}"
 					>
 						<button
 							class="flex w-full cursor-pointer items-center px-3 py-2 text-left hover:rounded-md hover:bg-blue-50 hover:text-blue-600"
-							onclick={() => activeResearch.update(research)}
+							onclick={() => activeResearch.update(researchItem.id)}
 						>
 							<Folder class="mr-2" />
 							<span class="truncate"
-								>{research.length > 20 ? research.substring(0, 17) + '...' : research}</span
+								>{researchItem.name.length > 20 ? researchItem.name.substring(0, 17) + '...' : researchItem.name}</span
 							>
 						</button>
 					</li>
@@ -97,7 +104,8 @@
 											createdAt
 										]);
 
-										researchList.add(newResearchName); 
+										const newResearchItem: ResearchItem = { id: newId, name: newResearchName, created_at: createdAt };
+										researchList.add(newResearchItem); 
 
 										newResearchName = '';
 										isAddNewResearch = false;
