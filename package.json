@@ -58,6 +58,7 @@
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
 		"@pdfslick/core": "^2.3.0",
+		"@tauri-apps/api": "^2.5.0",
 		"drizzle-orm": "^0.40.0",
 		"lucide-svelte": "^0.487.0",
 		"pdfjs-dist": "^5.1.91",

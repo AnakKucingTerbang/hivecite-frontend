@@ -78,3 +78,84 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+.geist-100 {
+  font-family: "Geist", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 100; /* Thin */
+  font-style: normal;
+}
+
+.geist-200 {
+  font-family: "Geist", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 200; /* Extra Light */
+  font-style: normal;
+}
+
+.geist-light {
+  font-family: "Geist", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.geist-regular {
+  font-family: "Geist", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.geist-500 {
+  font-family: "Geist", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500; /* Medium */
+  font-style: normal;
+}
+
+.geist-600 {
+  font-family: "Geist", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600; /* Semi Bold */
+  font-style: normal;
+}
+
+.geist-bold {
+  font-family: "Geist", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.geist-800 {
+  font-family: "Geist", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 800; /* Extra Bold */
+  font-style: normal;
+}
+
+.geist-900 {
+  font-family: "Geist", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 900; /* Black */
+  font-style: normal;
+}
+
+#circuit-board {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: 
+		linear-gradient(90deg, transparent 49%, rgba(37, 99, 235, 0.1) 50%, transparent 51%),
+		linear-gradient(0deg, transparent 49%, rgba(37, 99, 235, 0.1) 50%, transparent 51%);
+	background-size: 100px 100px;
+	animation: circuitGlow 4s ease-in-out infinite;
+}
+
+@keyframes circuitGlow {
+	0%, 100% { opacity: 0.3; }
+	50% { opacity: 0.8; }
+}

@@ -1,193 +1,232 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Github, BookOpen, Tag, Search, Cloud, Code } from 'lucide-svelte'; // Assuming lucide-svelte is installed or similar icons are available
+	import { Input } from '$lib/components/ui/input';
+	import Accordion from '$lib/components/ui/accordion/Accordion.svelte';
+	import AccordionItem from '$lib/components/ui/accordion/AccordionItem.svelte';
+	import MobileNotification from '$lib/components/ui/mobile-notification/MobileNotification.svelte';
+	import { MessagesSquare } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+	import { Highlighter } from 'lucide-svelte';
+	import { Snippet } from '$lib/components/ui/snippet';
+	import '@pdfslick/core/dist/pdf_viewer.css';
+
+    let snippets = $state<any>({})
+    let tempText = $state<string>("")
+    let previewFilePromise = $state<any>()
+	let email = '';
+
+    const deleteSnippet = (key: string) => {
+        delete snippets[key]
+
+        previewFilePromise.then((adobeViewer: any) => {
+                adobeViewer.getAnnotationManager().then((annotationManager: any) => {
+                    annotationManager.deleteAnnotations({ annotationIds: [key] })
+                        .then (() => console.log("Success"))
+                        .catch((error: any) => console.log(error));
+            });
+        });
+    }
+
+	const sleep = (ms: number) => new Promise(f => setTimeout(f, ms));
+
+    onMount(async () => {
+		await sleep(500);
+        // @ts-ignore
+        var adobeDCView = new AdobeDC.View({clientId: "079678ae12b548aa9e0719f7a9eea4a2", divId: "adobe-dc-view"});
+        previewFilePromise = adobeDCView.previewFile(
+            {
+                content:   {location: {url: "https://arxiv.org/pdf/1706.03762"}},
+                metaData:  {fileName: "Attention Is All You Need.pdf", id: "77c6fa5d-6d74-4104-8349-657c8411a834"}
+            },
+            {
+                enableAnnotationAPIs: true,
+                enableFilePreviewEvents: true,
+                enableAnnotationEvents: true,
+            }
+        );
+
+        previewFilePromise.then((adobeViewer: any) => {
+			adobeViewer.getAPIs().then((apis: any) => {
+                apis.getZoomAPIs().zoomIn()
+                apis.getZoomAPIs().zoomIn()
+                apis.getZoomAPIs().zoomIn()
+                apis.getZoomAPIs().zoomIn()
+        	});
+            adobeViewer.getAnnotationManager().then((annotationManager: any) => {
+                annotationManager.registerEventListener(
+                    function(event: any) {
+                        if (event.type === "PREVIEW_SELECTION_END") {
+                            setTimeout(() => {
+                                adobeViewer.getAPIs().then((apis: any) => {
+                                apis.getSelectedContent()
+                                    .then((result: any) => {
+                                        console.log("result", result)
+                                        tempText = result.data
+                                    });
+                            });
+                            }, 100)
+                        } else if (event.type === "ANNOTATION_ADDED") {
+                            console.log("annotation added", event.data)
+                            snippets[event.data.id] = tempText
+                            tempText = ""
+                        } else if (event.type === "ANNOTATION_CLICKED") {
+                            console.log("annotation clicked", event.data)
+                        }
+                    },
+                    {
+                        listenOn: ["ANNOTATION_ADDED", "ANNOTATION_CLICKED", "PREVIEW_SELECTION_END"]
+                    }
+                );
+            });
+        })
+	});
 </script>
 
-<div class="flex min-h-screen flex-col">
-	<!-- Hero Section -->
-	<section
-		class="from-primary to-primary/80 text-primary-foreground w-full bg-gradient-to-r py-12 md:py-24 lg:py-32 xl:py-48"
-	>
-		<div class="container mx-auto px-4 md:px-6">
-			<div class="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-				<div class="flex flex-col justify-center space-y-4">
-					<div class="space-y-2">
-						<h1 class="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-							Streamline Your Research with HiveCite
-						</h1>
-						<p class="text-primary-foreground/80 max-w-[600px] md:text-xl">
-							Tired of losing track of crucial insights in research papers? HiveCite helps you
-							highlight, organize, and reference key information effortlessly, so you can focus on
-							writing.
-						</p>
-					</div>
-					<div class="flex flex-col gap-2 min-[400px]:flex-row">
-						<Button size="lg" href="/dashboard">Get Started</Button>
-						<Button size="lg" variant="secondary" href="#features">Learn More</Button>
-					</div>
+<div class="flex min-h-screen flex-col relative">
+	<div id="circuit-board"></div>
+	<MobileNotification />
+	<!-- Header Section -->
+	<header class="flex justify-between py-5 px-8 z-10">
+		<div class="flex items-center gap-2">
+			<div class="bg-blue-600 rounded-lg p-2 text-white geist-bold">
+				HC
+			</div>
+			<p class="geist-bold text-lg text-stone-800">HiveCite</p>
+		</div>
+		<div class="flex gap-10 items-center text-stone-800">
+			<a href="#faq" class="group flex items-center gap-2 cursor-pointer hover:bg-stone-100 pr-0 px-5 sm:pr-4 py-4 rounded-2xl transition duration-300">
+				<MessagesSquare class="group-hover:-rotate-12 transition duration-300"/>
+				<p class="geist-bold">FAQs</p>
+			</a>
+			<!-- <div class="bg-stone-100 rounded-2xl px-5 py-1 text-white cursor-pointer items-center gap-3 hidden md:flex">
+				<svg height="48" viewBox="0 0 17 48" width="17" xmlns="http://www.w3.org/2000/svg"><path d="m15.5752 19.0792a4.2055 4.2055 0 0 0 -2.01 3.5376 4.0931 4.0931 0 0 0 2.4908 3.7542 9.7779 9.7779 0 0 1 -1.2755 2.6351c-.7941 1.1431-1.6244 2.2862-2.8878 2.2862s-1.5883-.734-3.0443-.734c-1.42 0-1.9252.7581-3.08.7581s-1.9611-1.0589-2.8876-2.3584a11.3987 11.3987 0 0 1 -1.9373-6.1487c0-3.61 2.3464-5.523 4.6566-5.523 1.2274 0 2.25.8062 3.02.8062.734 0 1.8771-.8543 3.2729-.8543a4.3778 4.3778 0 0 1 3.6822 1.841zm-6.8586-2.0456a1.3865 1.3865 0 0 1 -.2527-.024 1.6557 1.6557 0 0 1 -.0361-.337 4.0341 4.0341 0 0 1 1.0228-2.5148 4.1571 4.1571 0 0 1 2.7314-1.4078 1.7815 1.7815 0 0 1 .0361.373 4.1487 4.1487 0 0 1 -.9867 2.587 3.6039 3.6039 0 0 1 -2.5148 1.3236z"></path></svg>
+				<p class="text-stone-800 geist-bold">Mac App Store</p>
+			</div> -->
+		</div>
+	</header>
+	<section class="px-8 pt-10 sm:pt-40 z-10">
+		<div class="flex justify-center mb-4">
+			<p class="bg-blue-600/10 text-blue-600 rounded-full text-sm px-3 py-1 border border-stone-200 mb-4 w-fit">For individuals and teams doing research</p>
+		</div>
+		<h1 class="geist-bold text-3xl sm:text-6xl tracking-tight text-stone-800 leading-tight text-center mb-4"><span class="bg-blue-600/20 text-blue-600 px-3">Highlight</span>, organize, and search your citations in one place</h1>
+		<div class="flex justify-center">
+			<div class="flex gap-2 w-80">
+				<Input placeholder="Insert email" bind:value={email}/>
+				<Button
+					class="bg-blue-600 hover:bg-blue-700"
+					onclick={() => {
+						async function sendEmailToDiscord(email: string) {
+							const webhookUrl = 'http://localhost:3000/webhook/email';
+							
+							try {
+								const response = await fetch(webhookUrl, {
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json'
+									},
+									body: JSON.stringify({
+										email: email,
+										website_url: window.location.hostname, // Automatically gets current domain
+										// apiKey: 'YOUR_WEBHOOK_API_KEY' // Replace with your API key
+									})
+								});
+
+								const result = await response.json();
+								
+								if (response.ok) {
+									console.log('✅ Email sent to Discord successfully');
+									return { success: true, data: result };
+								} else {
+									console.error('❌ Failed to send email:', result.error);
+									return { success: false, error: result.error };
+								}
+							} catch (error) {
+								console.error('❌ Network error:', error);
+								return { success: false, error: 'Network error' };
+							}
+						}
+
+						sendEmailToDiscord(email)
+
+						console.log("foobar")
+					}}
+				>
+					<span>Join waitlist</span>
+				</Button>
+			</div>
+		</div>
+	</section>
+	<section class="px-8 sm:py-12 pt-12 md:py-24 lg:py-32 z-10">
+		<div class="text-blue-600 flex items-center gap-1 mb-2">
+			<div class="h-[7px] w-[20px] rounded-full bg-blue-600"></div>
+			<p>Highlight</p>
+		</div>
+		<h2 class="text-xl sm:text-3xl geist-500 mb-8">Easily highlight important texts <br> from your references</h2>
+		<div class="bg-blue-600/20 rounded-2xl px-4 pt-4 h-[500px] hidden sm:block">
+			<div class="bg-gray-100 h-full rounded-t grid grid-cols-10">
+				<div class="p-2 h-full col-span-7">
+					<div id="adobe-dc-view" class="rounded-md h-full"></div>
 				</div>
-				<!-- Placeholder for an image or illustration -->
-				<div class="flex items-center justify-center">
-					<!-- <img
-						src="/placeholder.svg"
-						alt="Hero Illustration"
-						class="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square bg-muted"
-						width="550"
-						height="550"
-					/> -->
+				<div id="scroll" class="overflow-auto p-2 col-span-3">
+					{#if Object.keys(snippets).length === 0}
+						<div class="border-2 border-dashed border-gray-300 h-full flex items-center justify-center text-xs gap-2 text-stone-500 flex-col">
+							<Highlighter size={48} />
+							Start highlighting your document to see your snippets here
+						</div>
+					{/if}
+					{#each Object.keys(snippets) as key}
+						<Snippet snippet={snippets[key]} key={key} deleteSnippet={deleteSnippet}/>
+					{/each}
 				</div>
 			</div>
 		</div>
 	</section>
-
-	<!-- Features Section -->
-	<section id="features" class="bg-background w-full py-12 md:py-24 lg:py-32">
-		<div class="container mx-auto px-4 md:px-6">
-			<div class="flex flex-col items-center justify-center space-y-4 text-center">
-				<div class="space-y-2">
-					<div class="bg-muted inline-block rounded-lg px-3 py-1 text-sm">Key Features</div>
-					<h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">
-						Manage Citations Like Never Before
-					</h2>
-					<p
-						class="text-muted-foreground max-w-[900px] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed"
-					>
-						HiveCite offers powerful tools designed specifically for researchers, students, and
-						academics to enhance their workflow.
-					</p>
-				</div>
+	<section class="px-8 pb-12 md:pb-24 lg:pb-32 z-10 flex justify-evenly">
+		<div>
+			<div class="text-green-600 flex items-center gap-1 mb-2">
+				<div class="h-[7px] w-[20px] rounded-full bg-green-600"></div>
+				<p>Organize</p>
 			</div>
-			<div
-				class="mx-auto mt-12 grid max-w-5xl items-start gap-8 sm:grid-cols-2 md:gap-12 lg:max-w-none lg:grid-cols-3"
-			>
-				<div class="grid gap-1 text-center md:text-left">
-					<div class="mb-2 flex justify-center md:justify-start">
-						<BookOpen class="text-primary h-8 w-8" />
-					</div>
-					<h3 class="text-xl font-bold">Intelligent Highlighting</h3>
-					<p class="text-muted-foreground text-sm">
-						Directly highlight text within research papers (PDFs, web articles) and save them
-						instantly.
-					</p>
-				</div>
-				<div class="grid gap-1 text-center md:text-left">
-					<div class="mb-2 flex justify-center md:justify-start">
-						<Tag class="text-primary h-8 w-8" />
-					</div>
-					<h3 class="text-xl font-bold">Tagging System</h3>
-					<p class="text-muted-foreground text-sm">
-						Organize your highlights with custom tags for easy categorization and retrieval.
-					</p>
-				</div>
-				<div class="grid gap-1 text-center md:text-left">
-					<div class="mb-2 flex justify-center md:justify-start">
-						<Search class="text-primary h-8 w-8" />
-					</div>
-					<h3 class="text-xl font-bold">Powerful Search</h3>
-					<p class="text-muted-foreground text-sm">
-						Quickly find specific highlights using free-text search across your entire library.
-					</p>
-				</div>
-				<div class="grid gap-1 text-center md:text-left">
-					<div class="mb-2 flex justify-center md:justify-start">
-						<Cloud class="text-primary h-8 w-8" />
-					</div>
-					<h3 class="text-xl font-bold">Cloud Integration</h3>
-					<p class="text-muted-foreground text-sm">
-						Connects seamlessly with your Google Drive and OneDrive accounts to access your papers.
-					</p>
-				</div>
-				<div class="grid gap-1 text-center md:text-left">
-					<div class="mb-2 flex justify-center md:justify-start">
-						<Code class="text-primary h-8 w-8" />
-					</div>
-					<h3 class="text-xl font-bold">Open Source</h3>
-					<p class="text-muted-foreground text-sm">
-						HiveCite is open source! Contribute, inspect the code, or host it yourself.
-					</p>
-				</div>
-				<div class="grid gap-1 text-center md:text-left">
-					<div class="mb-2 flex justify-center md:justify-start">
-						<Github class="text-primary h-8 w-8" />
-					</div>
-					<h3 class="text-xl font-bold">Easy Referencing</h3>
-					<p class="text-muted-foreground text-sm">
-						Effortlessly reference your stored highlights directly within your research papers.
-						(Feature coming soon!)
-					</p>
-				</div>
+			<h2 class="text-xl sm:text-3xl geist-500 mb-8">Organize highlights by tags</h2>
+		</div>
+		<div>
+			<div class="text-purple-600 flex items-center gap-1 mb-2">
+				<div class="h-[7px] w-[20px] rounded-full bg-purple-600"></div>
+				<p>Search</p>
 			</div>
+			<h2 class="text-xl sm:text-3xl geist-500 mb-8">Locate your highlights easily with AI</h2>
 		</div>
 	</section>
-
-	<!-- Comparison Section -->
-	<section id="compare" class="bg-muted w-full py-12 md:py-24 lg:py-32">
-		<div class="container mx-auto px-4 md:px-6">
-			<div class="mb-12 flex flex-col items-center justify-center space-y-4 text-center">
-				<div class="space-y-2">
-					<h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">How HiveCite Compares</h2>
-					<p
-						class="text-muted-foreground max-w-[900px] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed"
-					>
-						See how HiveCite stacks up against other popular research management tools.
-					</p>
-				</div>
-			</div>
-			<div class="overflow-x-auto">
-				<table class="w-full min-w-[600px] border-collapse text-left">
-					<thead>
-						<tr class="border-b">
-							<th class="text-muted-foreground p-4 font-medium">Feature</th>
-							<th class="text-primary p-4 text-center font-medium">HiveCite</th>
-							<th class="text-muted-foreground p-4 text-center font-medium">Zotero</th>
-							<th class="text-muted-foreground p-4 text-center font-medium">EndNote</th>
-							<th class="text-muted-foreground p-4 text-center font-medium">Anara</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr class="border-b">
-							<td class="p-4">Direct PDF Highlighting & Saving</td>
-							<td class="p-4 text-center text-green-500">✔</td>
-							<td class="p-4 text-center">Partial</td>
-							<td class="p-4 text-center">✔</td>
-							<td class="p-4 text-center">✖</td>
-						</tr>
-						<tr class="border-b">
-							<td class="p-4">Advanced Tagging System</td>
-							<td class="p-4 text-center text-green-500">✔</td>
-							<td class="p-4 text-center">✔</td>
-							<td class="p-4 text-center">Basic</td>
-							<td class="p-4 text-center">✔</td>
-						</tr>
-						<tr class="border-b">
-							<td class="p-4">Google Drive / OneDrive Sync</td>
-							<td class="p-4 text-center text-green-500">✔</td>
-							<td class="p-4 text-center">Via Plugin</td>
-							<td class="p-4 text-center">✔</td>
-							<td class="p-4 text-center">✖</td>
-						</tr>
-						<tr class="border-b">
-							<td class="p-4">Open Source</td>
-							<td class="p-4 text-center text-green-500">✔</td>
-							<td class="p-4 text-center text-green-500">✔</td>
-							<td class="p-4 text-center">✖</td>
-							<td class="p-4 text-center">✖</td>
-						</tr>
-						<tr>
-							<td class="p-4">Price</td>
-							<td class="p-4 text-center">Free (OSS)</td>
-							<td class="p-4 text-center">Free</td>
-							<td class="p-4 text-center">Paid</td>
-							<td class="p-4 text-center">Freemium</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+	<section id="faq" class="px-8 pb-12 md:pb-24 lg:pb-32 z-10">
+		<div class="flex items-center gap-1 mb-2">
+			<div class="h-[7px] w-[20px] rounded-full bg-black"></div>
+			<p>FAQ</p>
 		</div>
+		<Accordion multiple={true}>
+			<AccordionItem>
+				<span slot="header">Is HiveCite free?</span>
+				<p slot="content">Yes, HiveCite is free for offline, individual use. This means you can download and use the app on your device, and all your research data, snippets, and notes will be stored locally on that device. <br><br> However, if you wish to collaborate with other researchers online and utilize HiveCite's cloud-based features, there will be a subscription fee. Details on pricing plans for online collaboration will be announced soon.</p>
+			</AccordionItem>
+			<AccordionItem>
+				<span slot="header">What is HiveCite?</span>
+				<p slot="content">HiveCite is a dedicated application designed to help researchers effectively manage and organize the most valuable snippets of information found within research papers. While existing reference management tools often focus on high-level citation organization, HiveCite takes it a step further by allowing you to capture, categorize, and easily access specific pieces of information - the "aha!" moments, key data points, or insightful arguments - that are crucial to your work. <br><br> As researchers ourselves, we understand the challenge of keeping track of these vital bits of information. HiveCite aims to streamline this process, ensuring that the valuable details you discover are readily available whenever you need them for your projects, papers, or presentations.</p>
+			</AccordionItem>
+			<AccordionItem>
+				<span slot="header">Is it a desktop app?</span>
+				<p slot="content">The free version of the app is a desktop app.</p>
+			</AccordionItem>
+			<AccordionItem>
+				<span slot="header">What is HiveCite's Pricing?</span>
+				<p slot="content">To be announce</p>
+			</AccordionItem>
+			<AccordionItem>
+				<span slot="header">Are there any discounts?</span>
+				<p slot="content">For students! Contact us for more detail.</p>
+			</AccordionItem>
+		</Accordion>
 	</section>
-
 	<!-- Footer -->
-	<footer class="bg-background flex items-center justify-center border-t py-6">
+	<footer class="bg-background flex items-center justify-center border-t py-6 z-10">
 		<p class="text-muted-foreground text-xs">
 			&copy; {new Date().getFullYear()} HiveCite. All rights reserved.
 		</p>
