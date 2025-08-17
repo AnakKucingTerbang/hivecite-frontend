@@ -5,6 +5,7 @@
 	import { modalStates } from '@/states.svelte'
     import * as Sheet from "$lib/components/ui/sheet";
     import * as AlertDialog from "$lib/components/ui/alert-dialog";
+    import * as Dialog from "$lib/components/ui/dialog"
 
     let papers = $state<any[]>([
         {
@@ -94,7 +95,95 @@
             }
         })
     )
+    let openDialog = $state<boolean>(false)
+    let availableTags = $state<string[]>([
+        "Artificial Intelligence",
+        "Machine Learning",
+        "Deep Learning",
+        "Natural Language Processing",
+        "Computer Vision",
+        "Reinforcement Learning",
+        "Neural Networks",
+        "Data Science",
+    ]);
+    let dialogQuery = $state<string>("")
+    let dialogFilteredTags = $derived<any[]>(
+        availableTags.filter(tag => tag.toLowerCase().includes(dialogQuery.toLocaleLowerCase()) && !papers[selectedPaperIndex!].tags.includes(tag))
+    )
 </script>
+
+<Dialog.Root bind:open={openDialog}>
+    <Dialog.Content class="p-0">
+        <Dialog.Header class="border-b-1 border-gray-200 p-6">
+            <Dialog.Title>
+                <div class="flex gap-3 items-center ">
+                    <div class="bg-blue-100 w-fit p-2 rounded-xl">
+                        <Tag class="text-blue-600 w-5 h-5"/>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-900">Add tag</h2>
+                </div>
+            </Dialog.Title>
+            <Dialog.Description>
+                <div class="bg-gray-200 border border-gray-300 text-sm text-gray-700 rounded-md p-2 mt-4">
+                    Search existing tags in the search bar and select from the list, or type a new tag name and click "Add" to create it.
+                </div>
+            </Dialog.Description>
+        </Dialog.Header>
+        <div class="px-6 pb-6 space-y-4 border-b-1 border-gray-200">
+            <div>
+                <p class="block text-sm font-medium text-gray-700 mb-2">Tag</p>
+                <Input
+                    value={dialogQuery}
+                    placeholder="Search tag..."
+                    oninput={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        dialogQuery = target.value
+                    }}
+                />
+            </div>
+            <div class="flex gap-1 flex-wrap border border-gray-200 rounded-md p-2 max-h-40 overflow-y-auto">
+                {#each dialogFilteredTags as tag}
+                    <button
+                        onclick={() => {
+                            dialogQuery = tag
+                        }}
+                        class="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium cursor-pointer transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    >
+                        {tag}
+                    </button>
+                {:else}
+                    <p class="text-gray-400 w-full text-center text-sm">No existing tags found</p>
+                {/each}
+            </div>
+        </div>
+        <Dialog.Footer class="px-6 pb-6">
+            <Button
+                variant="outline"
+                onclick={() => {
+                    openDialog = false
+                }}
+            >
+                Cancel
+            </Button>
+            <Button
+                class="bg-blue-600 hover:bg-blue-700"
+                onclick={() => {
+                    openDialog = false
+                    papers[selectedPaperIndex!].tags.push(dialogQuery)
+                    
+                    const found = availableTags.findIndex(_tag => _tag === dialogQuery)
+                    if (found === -1) {
+                        availableTags.push(dialogQuery)
+                    }
+
+                    dialogQuery = ""
+                }}
+            >
+                Apply
+            </Button>
+        </Dialog.Footer>
+    </Dialog.Content>
+</Dialog.Root>
 
 <Sheet.Root bind:open={openSheet}>
     <Sheet.Content>
@@ -289,9 +378,15 @@
                                     {/if}
                                     <button
                                         onclick={() => {
-                                            modalStates.update(prev => {
-                                                return { ...prev, addTag: { show: true, metadata: { id: paper.id } } }
-                                            })
+                                            // modalStates.update(prev => {
+                                            //     return { ...prev, addTag: { show: true, metadata: { id: paper.id } } }
+                                            // })
+                                            const found = papers.findIndex(_paper => _paper.id === paper.id)
+                                            if (found !== -1) {
+                                                selectedPaperIndex = found
+                                                openDialog = true
+                                            }
+                                            
                                         }}
                                         class="inline-block px-2 py-1 rounded-sm text-xs font-medium cursor-pointer transition-colors border border-gray-200 text-gray-700 hover:bg-gray-300"
                                     >

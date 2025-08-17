@@ -26,6 +26,8 @@
 - [x] When deleting a paper that is filtered by highlight, the filtered highlight is still active
 - [x] When deleting a tag that is filtered by highlight, the filtered tag is still active
 - [x] Update the snippet component to match the rest of the UI
+- [x] Use dialog instead of custom modal for tags in all component
+- [ ] Refactor sheet/alert dialog/dialog by adding bind:open and uncluttering the html since they do not need to be embedded. See https://claude.ai/chat/3cf4d9d1-37c3-4bda-b23d-b20ab67728cb for reference
 - [ ] Create DB schema
 - [ ] Deploy DB
 - [ ] Implement auth
@@ -40,7 +42,7 @@
     - [ ] Add annotation
     - [ ] Get annotation
     - [ ] Delete annotation
-    - [ ] Add tag to annotation (* Might need to refactor how I added tag in annotation and library page. Checkout how it was implemented in the snippet component with the Dialog component from shadcn)
+    - [ ] Add tag to annotationß
     - [ ] add tag to paper
     - [ ] Delete tag
     - [ ] Add comment
