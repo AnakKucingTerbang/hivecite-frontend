@@ -1,8 +1,13 @@
 {
-	"name": "hivecite",
+	"name": "eaglecite",
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
+	"npm": {
+		"onlyBuiltDependencies": [
+			"lightningcss"
+		]
+	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -23,6 +28,8 @@
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
+		"@internationalized/date": "^3.8.2",
+		"@lucide/svelte": "^0.515.0",
 		"@playwright/test": "^1.49.1",
 		"@sveltejs/adapter-auto": "^6.0.0",
 		"@sveltejs/adapter-static": "^3.0.8",
@@ -33,7 +40,7 @@
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/svelte": "^5.2.4",
 		"@types/node": "^22.14.0",
-		"bits-ui": "^0.22.0",
+		"bits-ui": "^2.9.3",
 		"clsx": "^2.1.1",
 		"drizzle-kit": "^0.30.2",
 		"eslint": "^9.18.0",

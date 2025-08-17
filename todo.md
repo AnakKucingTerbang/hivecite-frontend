@@ -1,14 +1,48 @@
-- [ ] Check there out first
-    - [ ] Adobe
-        - [ ] https://developer.adobe.com/document-services/docs/overview/pdf-embed-api/
-        - [ ] https://acrobatservices.adobe.com/dc-integration-creation-app-cdn/main.html
-        - [ ] DOCUMENTATION ANNOTATIOn - https://developer.adobe.com/document-services/docs/overview/pdf-embed-api/howtos_comments/#single-line-implementation
-    - [ ] https://www.reddit.com/r/sveltejs/comments/1hte3q9/looking_for_pdf_viewer_that_works_with_svelte_5/
-- [ ] Bugs on highlight page
-    - [ ] use selectedText.split("\n") to determine if we should go nextSibling or previousSibling
-    - [ ] a bug (sometimes) after highlighting, and click shift (maybe?) it will just fill the whole page with text
-    - [ ] when replacing text, the text that are not encapsulated in <span> cannot be selected. Probably need to manipulate the replacement
-        - [ ] it has something to do with how the `left` property is used
-    - [ ] need to be able to highlight over multiple pages
-    - [ ] when highlighting over multiple pages, it sometimes would highlight other things like page number, etc. Can't modify the pdf, so probably need to have a work around software side
-    - [ ] when scrolling to other pages, the highlight can dissapear. Maybe have a detection of what page the user is in and rerender the highlight for that page
+- [x] Sidebar stays highlighted when clicked
+- [x] Add "paper" and "highlights" option to research project
+- [x] Make cards in annotation and library consistent to the one in research projects
+- [x] Create add project modal
+- [x] Create add paper modal
+- [x] Create filter modal in library page
+- [x] Add project modal input validation
+- [x] Add paper modal input validation
+    - Partially done, for the link I need to make a HEAD request to see if the response is a PDF
+- [x] Search project funtionality
+- [x] Search project paper funtionality
+- [x] Search highlights funtionality
+- [x] When user click copy in annotations, it shows a (popover)[https://www.shadcn-svelte.com/docs/components/popover] and show `copy annotation` or `copy reference`
+- [x] When tags are click, it will filter just the papers/annotations that has that tag
+- [x] Delete tag
+- [x] Add tag
+- [x] When deleting tag, remove it also from the filtered tag
+- [x] Implement add tag to research projects page (papers)
+- [x] Implement add tag to research projects page (highlights)
+- [x] Implement remove tag to research projects page (papers)
+- [x] Implement remove tag to research projects page (highlights)
+- [x] Implement view all tag to research projects page (papers)
+- [x] Implement view all tag to research projects page (highlights)
+- [x] Delete highlight
+- [x] Delete paper
+- [x] When deleting a paper that is filtered by highlight, the filtered highlight is still active
+- [x] When deleting a tag that is filtered by highlight, the filtered tag is still active
+- [x] Update the snippet component to match the rest of the UI
+- [ ] Create DB schema
+- [ ] Deploy DB
+- [ ] Implement auth
+- [ ] Integrate with UploadThing
+- [ ] API
+    - [ ] Create research project
+    - [ ] Get research project
+    - [ ] Upload paper
+    - [ ] Store link
+    - [ ] Showcase PDF
+    - [ ] Delete paper/link
+    - [ ] Add annotation
+    - [ ] Get annotation
+    - [ ] Delete annotation
+    - [ ] Add tag to annotation (* Might need to refactor how I added tag in annotation and library page. Checkout how it was implemented in the snippet component with the Dialog component from shadcn)
+    - [ ] add tag to paper
+    - [ ] Delete tag
+    - [ ] Add comment
+    - [ ] Delete comment
+    - [ ] Update comment

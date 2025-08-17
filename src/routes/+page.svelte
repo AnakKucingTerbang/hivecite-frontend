@@ -21,8 +21,8 @@
         previewFilePromise.then((adobeViewer: any) => {
                 adobeViewer.getAnnotationManager().then((annotationManager: any) => {
                     annotationManager.deleteAnnotations({ annotationIds: [key] })
-                        .then (() => console.log("Success"))
-                        .catch((error: any) => console.log(error));
+                        .then (() => {})
+                        .catch((error: any) => {});
             });
         });
     }
@@ -60,17 +60,17 @@
                                 adobeViewer.getAPIs().then((apis: any) => {
                                 apis.getSelectedContent()
                                     .then((result: any) => {
-                                        console.log("result", result)
+                                        // console.log("result", result)
                                         tempText = result.data
                                     });
                             });
                             }, 100)
                         } else if (event.type === "ANNOTATION_ADDED") {
-                            console.log("annotation added", event.data)
+                            // console.log("annotation added", event.data)
                             snippets[event.data.id] = tempText
                             tempText = ""
                         } else if (event.type === "ANNOTATION_CLICKED") {
-                            console.log("annotation clicked", event.data)
+                            // console.log("annotation clicked", event.data)
                         }
                     },
                     {
@@ -91,7 +91,7 @@
 			<div class="bg-blue-600 rounded-lg p-2 text-white geist-bold">
 				HC
 			</div>
-			<p class="geist-bold text-lg text-stone-800">HiveCite</p>
+			<p class="geist-bold text-lg text-stone-800">EagleCite</p>
 		</div>
 		<div class="flex gap-10 items-center text-stone-800">
 			<a href="#faq" class="group flex items-center gap-2 cursor-pointer hover:bg-stone-100 pr-0 px-5 sm:pr-4 py-4 rounded-2xl transition duration-300">
@@ -134,7 +134,7 @@
 								const result = await response.json();
 								
 								if (response.ok) {
-									console.log('✅ Email sent to Discord successfully');
+									// console.log('✅ Email sent to Discord successfully');
 									return { success: true, data: result };
 								} else {
 									console.error('❌ Failed to send email:', result.error);
@@ -147,8 +147,6 @@
 						}
 
 						sendEmailToDiscord(email)
-
-						console.log("foobar")
 					}}
 				>
 					<span>Join waitlist</span>
@@ -204,19 +202,19 @@
 		</div>
 		<Accordion multiple={true}>
 			<AccordionItem>
-				<span slot="header">Is HiveCite free?</span>
-				<p slot="content">Yes, HiveCite is free for offline, individual use. This means you can download and use the app on your device, and all your research data, snippets, and notes will be stored locally on that device. <br><br> However, if you wish to collaborate with other researchers online and utilize HiveCite's cloud-based features, there will be a subscription fee. Details on pricing plans for online collaboration will be announced soon.</p>
+				<span slot="header">Is EagleCite free?</span>
+				<p slot="content">Yes, EagleCite is free for offline, individual use. This means you can download and use the app on your device, and all your research data, snippets, and notes will be stored locally on that device. <br><br> However, if you wish to collaborate with other researchers online and utilize EagleCite's cloud-based features, there will be a subscription fee. Details on pricing plans for online collaboration will be announced soon.</p>
 			</AccordionItem>
 			<AccordionItem>
-				<span slot="header">What is HiveCite?</span>
-				<p slot="content">HiveCite is a dedicated application designed to help researchers effectively manage and organize the most valuable snippets of information found within research papers. While existing reference management tools often focus on high-level citation organization, HiveCite takes it a step further by allowing you to capture, categorize, and easily access specific pieces of information - the "aha!" moments, key data points, or insightful arguments - that are crucial to your work. <br><br> As researchers ourselves, we understand the challenge of keeping track of these vital bits of information. HiveCite aims to streamline this process, ensuring that the valuable details you discover are readily available whenever you need them for your projects, papers, or presentations.</p>
+				<span slot="header">What is EagleCite?</span>
+				<p slot="content">EagleCite is a dedicated application designed to help researchers effectively manage and organize the most valuable snippets of information found within research papers. While existing reference management tools often focus on high-level citation organization, EagleCite takes it a step further by allowing you to capture, categorize, and easily access specific pieces of information - the "aha!" moments, key data points, or insightful arguments - that are crucial to your work. <br><br> As researchers ourselves, we understand the challenge of keeping track of these vital bits of information. EagleCite aims to streamline this process, ensuring that the valuable details you discover are readily available whenever you need them for your projects, papers, or presentations.</p>
 			</AccordionItem>
 			<AccordionItem>
 				<span slot="header">Is it a desktop app?</span>
 				<p slot="content">The free version of the app is a desktop app.</p>
 			</AccordionItem>
 			<AccordionItem>
-				<span slot="header">What is HiveCite's Pricing?</span>
+				<span slot="header">What is EagleCite's Pricing?</span>
 				<p slot="content">To be announce</p>
 			</AccordionItem>
 			<AccordionItem>
@@ -228,7 +226,7 @@
 	<!-- Footer -->
 	<footer class="bg-background flex items-center justify-center border-t py-6 z-10">
 		<p class="text-muted-foreground text-xs">
-			&copy; {new Date().getFullYear()} HiveCite. All rights reserved.
+			&copy; {new Date().getFullYear()} EagleCite. All rights reserved.
 		</p>
 	</footer>
 </div>
