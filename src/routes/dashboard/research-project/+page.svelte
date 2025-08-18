@@ -2,7 +2,7 @@
 	import { Folder, FileText, Highlighter, Tag, Plus } from 'lucide-svelte';
     import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
-	import { modalStates } from '@/states.svelte'
+    import AddResearchProject from '@/components/ui/modal/add-research-project-2/AddResearchProject.svelte';
 
     const projects = [
         {
@@ -47,7 +47,12 @@
     let filteredProjects = $derived<any[]>(
         projects.filter(project => project.name.toLowerCase().includes(query) || project.description.toLowerCase().includes(query))
     )
+    let open = $state<boolean>(false)
 </script>
+
+<AddResearchProject
+    bind:open
+/>
 
 <div class="flex h-screen w-full flex-col">
 	<div class="flex items-center justify-between p-4">
@@ -66,9 +71,7 @@
 			<Button 
                 class="bg-blue-600"
                 onclick={() => {
-                    modalStates.update(prev => {
-                        return { ...prev, addResearchProject: { show: true } }
-                    })
+                    open = true
                 }}
             >
 				<Plus />

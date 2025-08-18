@@ -1,45 +1,49 @@
 <script lang="ts">
 	import { Link, Upload, X, FileText, CheckCircle2, Download } from 'lucide-svelte';
-	import { modalStates } from '@/states.svelte'
+    import * as Dialog from "$lib/components/ui/dialog"
+    import { Input } from '$lib/components/ui/input';
+    import { Button } from '$lib/components/ui/button';
 
-    let uploadMethod = $state<"link" | "upload">("link")
+    let {
+        open = $bindable(false)
+    } = $props();
+
+    let uploadMethod = $state<"link"|"upload">("link")
     let paperLink = $state<string | null>(null)
-
-    // svelte-ignore non_reactive_update
-    let fileInput: HTMLInputElement;
-
     let isDragOver = $state<boolean>(false);
     let uploadedFile = $state<File | null>(null);
     let warning = $state<string>("");
+    // svelte-ignore non_reactive_update
+    let fileInput: HTMLInputElement;
 
-    function handleDragOver(event) {
+    const handleDragOver = (event: DragEvent) => {
         event.preventDefault();
         isDragOver = true;
     }
 
-    function handleDragLeave(event) {
+    const handleDragLeave = (event: DragEvent) => {
         event.preventDefault();
         isDragOver = false;
     }
 
-    function handleDrop(event) {
+    const handleDrop = (event: DragEvent) => {
         event.preventDefault();
         isDragOver = false;
         
-        const files = event.dataTransfer.files;
+        const files = event.dataTransfer!.files;
         if (files.length > 0) {
             processFile(files[0]);
         }
     }
 
-    function handleFileSelect(event) {
-        const files = event.target.files;
+    const handleFileSelect = (event: any) => {
+        const files = event.target!.files;
         if (files.length > 0) {
         processFile(files[0]);
         }
     }
 
-    function processFile(file: File) {
+    const processFile = (file: File) => {
         warning = '';
         
         // Check if file is PDF
@@ -57,11 +61,11 @@
         uploadedFile = file;
     }
 
-    function browseFiles() {
+    const browseFiles = () => {
         fileInput.click();
     }
 
-    function removeFile() {
+    const removeFile = () => {
         uploadedFile = null;
         warning = '';
         fileInput.value = '';
@@ -69,28 +73,24 @@
 
 </script>
 
-<div class="absolute h-screen w-screen z-10 bg-gray-700/40 flex items-center justify-center">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-        <div class="flex items-center justify-between p-6 border-b">
-            <div class="flex gap-3 items-center">
+<Dialog.Root bind:open>
+    <Dialog.Content class="p-0">
+        <Dialog.Header class="border-b-1 border-gray-200 p-6">
+            <Dialog.Title>
+                <div class="flex gap-3 items-center">
                 <div class="bg-blue-100 w-fit p-2 rounded-xl">
                     <FileText class="text-blue-600 w-5 h-5"/>
                 </div>
                 <h2 class="text-xl font-semibold text-gray-900">Add Paper</h2>
             </div>
-            <button
-                onclick={() => {
-                    modalStates.update(prev => {
-                        return { ...prev, addPaper: { show: false } }
-                    })
-                }}
-                class="text-gray-400 hover:text-gray-600 cursor-pointer"
-            >
-                <X size={20} />
-            </button>
-        </div>
-    
-        <div class="p-6">
+            </Dialog.Title>
+            <Dialog.Description>
+                <div class="bg-gray-200 border border-gray-300 text-sm text-gray-700 rounded-md p-2 mt-4">
+                    Search existing tags in the search bar and select from the list, or type a new tag name and click "Add" to create it.
+                </div>
+            </Dialog.Description>
+        </Dialog.Header>
+        <div class="px-6 pb-6">
             <div class="flex border-b mb-6">
             <button
                 onclick={() => uploadMethod = "link"}
@@ -193,28 +193,25 @@
                 </div>
             {/if}
         </div>
-
-        <div class="flex justify-end gap-3 p-6 border-t bg-gray-50 rounded-b-lg">
-            <button 
-                onclick={() =>{
-                    modalStates.update(prev => {
-                        return { ...prev, addPaper: { show: false } }
-                    })
+        <Dialog.Footer class="p-6 border-t bg-gray-50">
+            <Button
+                variant="outline"
+                onclick={() => {
+                    open = false
                 }}
-                class="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100 cursor-pointer"
             >
                 Cancel
-            </button>
-            <button
-                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer"
+            </Button>
+            <Button
+                class="bg-blue-600 hover:bg-blue-700"
                 onclick={() => {
-                    if (uploadMethod === "link") {
-
-                    }
+                    open = false
+                    
+                    // todo: call api
                 }}
             >
-                Add Paper
-            </button>
-        </div>
-    </div>
-</div>
+                Add
+            </Button>
+        </Dialog.Footer>
+    </Dialog.Content>
+</Dialog.Root>

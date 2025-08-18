@@ -27,7 +27,7 @@
 - [x] When deleting a tag that is filtered by highlight, the filtered tag is still active
 - [x] Update the snippet component to match the rest of the UI
 - [x] Use dialog instead of custom modal for tags in all component
-- [ ] Refactor sheet/alert dialog/dialog by adding bind:open and uncluttering the html since they do not need to be embedded. See https://claude.ai/chat/3cf4d9d1-37c3-4bda-b23d-b20ab67728cb for reference
+- [x] Refactor sheet/alert dialog/dialog by adding bind:open and uncluttering the html since they do not need to be embedded. See https://claude.ai/chat/3cf4d9d1-37c3-4bda-b23d-b20ab67728cb for reference
 - [ ] Create DB schema
 - [ ] Deploy DB
 - [ ] Implement auth

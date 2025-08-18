@@ -1,7 +1,12 @@
 <script lang="ts">
-	import { Search, X, Folder, TriangleAlert } from 'lucide-svelte';
-	import { modalStates } from '@/states.svelte'
+    import * as Dialog from "$lib/components/ui/dialog"
+    import { Button } from '$lib/components/ui/button';
     import * as Alert from "$lib/components/ui/alert";
+	import { Search, X, Folder, TriangleAlert } from 'lucide-svelte';
+
+    let {
+        open = $bindable()
+    } = $props();
 
     // Mock email suggestions
     const emailSuggestions = [
@@ -23,28 +28,21 @@
         email.toLowerCase().includes(emailSearch.toLowerCase()) && 
         !selectedEmails.includes(email)
     ))
+
 </script>
 
-<div class="absolute h-screen w-screen z-10 bg-gray-700/40 flex items-center justify-center">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-        <div class="flex items-center justify-between p-6 border-b">
-        <div class="flex gap-3 items-center">
-            <div class="bg-blue-100 w-fit p-2 rounded-xl">
-                <Folder class="text-blue-600 w-5 h-5"/>
+<Dialog.Root bind:open>
+    <Dialog.Content class="p-0">
+        <Dialog.Header class="border-b-1 border-gray-200 p-6">
+            <Dialog.Title>
+                <div class="flex gap-3 items-center">
+                <div class="bg-blue-100 w-fit p-2 rounded-xl">
+                    <Folder class="text-blue-600 w-5 h-5"/>
+                </div>
+                <h2 class="text-xl font-semibold text-gray-900">Add Research Project</h2>
             </div>
-            <h2 class="text-xl font-semibold text-gray-900">Add Research Project</h2>
-        </div>
-        <button 
-            onclick={() => {
-                modalStates.update(prev => {
-                    return { ...prev, addResearchProject: { show: false } }
-                })
-            }} 
-            class="text-gray-400 hover:text-gray-600 cursor-pointer">
-            <X size={20} />
-        </button>
-        </div>
-        
+            </Dialog.Title>
+        </Dialog.Header>
         <div class="p-6 space-y-4">
             {#if warnings.length > 0}
                 <Alert.Root>
@@ -104,18 +102,8 @@
                             placeholder={selectedEmails.length === 0 ? "Search emails..." : ""}
                         />
                     </div>
-                    <div class="flex flex-wrap gap-1 flex-1">
-                        {#each selectedEmails as selectedEmail}
-                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm flex items-center w-fit">
-                                {selectedEmail}
-                                <button onclick={() => { selectedEmails = selectedEmails.filter(item => item !== selectedEmail) }} class="ml-1 text-blue-600 hover:text-blue-800 cursor-pointer">
-                                    <X size={12} />
-                                </button>
-                            </span>
-                        {/each}
-                    </div>
                     {#if emailSearch && filteredEmails.length > 0}
-                        <div class="absolute hover:block bg-white rounded-md p-2 shadow-md">
+                        <div class="absolute hover:block bg-white rounded-md p-2 shadow-md border border-gray-200">
                             {#each filteredEmails as filteredEmail}
                                 <button
                                     onclick={() => {
@@ -129,54 +117,60 @@
                             {/each}
                         </div>
                     {/if}
+                    <div class="flex flex-wrap gap-1 flex-1">
+                        {#each selectedEmails as selectedEmail}
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm flex items-center w-fit">
+                                {selectedEmail}
+                                <button onclick={() => { selectedEmails = selectedEmails.filter(item => item !== selectedEmail) }} class="ml-1 text-blue-600 hover:text-blue-800 hover:bg-blue-300 rounded-sm cursor-pointer">
+                                    <X size={12} />
+                                </button>
+                            </span>
+                        {/each}
+                    </div>
                 </div>
             </div>
         </div>
+        <Dialog.Footer class="p-6 border-t bg-gray-50">
+            <Button
+                variant="outline"
+                onclick={() => {
+                    open = false
+                }}
+            >
+                Cancel
+            </Button>
+            <Button
+                class="bg-blue-600 hover:bg-blue-700"
+                onclick={() => {
+                    let index
 
-        <div class="flex justify-end gap-3 p-6 border-t bg-gray-50 rounded-b-lg">
-        <button 
-            onclick={() => {
-                // todo: add validation and store value
-                modalStates.update(prev => {
-                    return { ...prev, addResearchProject: { show: false } }
-                })
-            }}
-            class="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100 cursor-pointer"
-        >
-            Cancel
-        </button>
-        <button
-            onclick={() => {
-                let index
-
-                if (projectName === "") {
-                    index = warnings.findIndex((warning) => warning === "Project must have a name")
-                    if (index === -1) {
-                        warnings.push("Project must have a name")
+                    if (projectName === "") {
+                        index = warnings.findIndex((warning) => warning === "Project must have a name")
+                        if (index === -1) {
+                            warnings.push("Project must have a name")
+                        }
+                    } else {
+                        warnings = warnings.filter((warning) => warning !== "Project must have a name")
                     }
-                } else {
-                    warnings = warnings.filter((warning) => warning !== "Project must have a name")
-                }
 
-                if (projectDescription === "") {
-                    index = warnings.findIndex((warning) => warning === "Project must have a description")
-                    if (index === -1) {
-                        warnings.push("Project must have a description")
+                    if (projectDescription === "") {
+                        index = warnings.findIndex((warning) => warning === "Project must have a description")
+                        if (index === -1) {
+                            warnings.push("Project must have a description")
+                        }
+                    } else {
+                        warnings = warnings.filter((warning) => warning !== "Project must have a description")
                     }
-                } else {
-                    warnings = warnings.filter((warning) => warning !== "Project must have a description")
-                }
 
-                if (warnings.length > 0) return
+                    if (warnings.length > 0) return
 
-                modalStates.update(prev => {
-                    return { ...prev, addResearchProject: { show: false } }
-                })
-            }}
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer"
-        >
-            Add Research Project
-        </button>
-        </div>
-    </div>
-</div>
+                    // Check if project name is unique
+
+                    open = false
+                }}
+            >
+                Add
+            </Button>
+        </Dialog.Footer>
+    </Dialog.Content>
+</Dialog.Root>
